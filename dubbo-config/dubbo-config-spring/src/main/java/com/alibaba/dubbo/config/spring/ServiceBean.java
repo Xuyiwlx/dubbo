@@ -114,6 +114,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
     }
 
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        // 是否延迟暴露&&是否已暴露&&是否已被取消暴露
         if (isDelay() && !isExported() && !isUnexported()) {
             if (logger.isInfoEnabled()) {
                 logger.info("The service ready on spring started. service: " + getInterface());

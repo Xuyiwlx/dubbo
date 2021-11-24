@@ -348,8 +348,10 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         }
         // 泛化接口的实现
         if (ref instanceof GenericService) {
+            // 设置interfaceClass为GenericService.class
             interfaceClass = GenericService.class;
             if (StringUtils.isEmpty(generic)) {
+                // 设置generic = "true";
                 generic = Boolean.TRUE.toString();
             }
         // 普通接口的实现
@@ -373,10 +375,12 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             }
             Class<?> localClass;
             try {
+                // 获取本地存根类
                 localClass = ClassHelper.forNameWithThreadContextClassLoader(local);
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException(e.getMessage(), e);
             }
+            // 校验本地存根类是否可以赋值给接口类,若不可赋值则抛出异常
             if (!interfaceClass.isAssignableFrom(localClass)) {
                 throw new IllegalStateException("The local implementation class " + localClass.getName() + " not implement interface " + interfaceName);
             }
@@ -413,7 +417,9 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         }
         // 暴露服务
         doExportUrls();
-        // TODO 芋艿，等待 qos
+        // ProviderModel表示服务提供者模型,此对象中存储了与服务提供者相关的信息
+        // 比如服务的配置信息、服务的实例等.每个被暴露的服务对应一个ProviderModel
+        // ApplicationModel持有所有的ProviderModel
         ProviderModel providerModel = new ProviderModel(getUniqueServiceName(), this, ref);
         ApplicationModel.initProviderModel(getUniqueServiceName(), providerModel);
     }
@@ -462,7 +468,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
     private void doExportUrls() {
         // 加载注册中心 URL 数组
         List<URL> registryURLs = loadRegistries(true);
-        // 循环 `protocols` ，向逐个注册中心分组暴露服务。
+        // 循环 `protocols` ，逐个向注册中心分组暴露服务。
         for (ProtocolConfig protocolConfig : protocols) {
             doExportUrlsFor1Protocol(protocolConfig, registryURLs);
         }

@@ -25,6 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * ProviderModel
+ *
+ * 服务提供者模型
+ *
+ */
 public class ProviderModel {
     private final String serviceName;
     private final Object serviceInstance;
