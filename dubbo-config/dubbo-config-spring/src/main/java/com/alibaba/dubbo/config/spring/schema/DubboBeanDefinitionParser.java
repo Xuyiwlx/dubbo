@@ -64,7 +64,8 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
      */
     private final Class<?> beanClass;
     /**
-     * 是否需要 Bean 的 `id` 属性
+     * 是否需要在 Bean 对象的编号 `id` 属性不存在时,自动生成编号.
+     * 无需被其他应用引用的配置对象,无需自动生成编号.例如有<dubbo:reference />
      */
     private final boolean required;
 
@@ -74,10 +75,14 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     @SuppressWarnings("unchecked")
+    //解析方法主流程
     private static BeanDefinition parse(Element element, ParserContext parserContext, Class<?> beanClass, boolean required) {
+        // 创建RootBeanDefinition
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(beanClass);
         beanDefinition.setLazyInit(false);
+
+        // 处理Bean的编号
         // 解析配置对象的 id 。若不存在，则进行生成。
         String id = element.getAttribute("id");
         if ((id == null || id.length() == 0) && required) {
@@ -110,9 +115,9 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             beanDefinition.getPropertyValues().addPropertyValue("id", id);
         }
 //        System.out.println("id:" + id);
+
         // 处理 `<dubbo:protocol` /> 的特殊情况
         if (ProtocolConfig.class.equals(beanClass)) {
-            // 需要满足第 220 至 233 行。
             // 例如：【顺序要这样】
             // <dubbo:service interface="com.alibaba.dubbo.demo.DemoService" protocol="dubbo" ref="demoService"/>
             // <dubbo:protocol id="dubbo" name="dubbo" port="20880"/>
